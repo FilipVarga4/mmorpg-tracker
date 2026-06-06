@@ -1,4 +1,10 @@
-<?php require 'templates/header.php'; ?>
+<?php require 'templates/header.php';
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit;
+}
+?>
+
 
     <h2>Záznam novej postavy a výbavy</h2>
 

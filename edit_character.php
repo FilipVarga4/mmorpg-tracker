@@ -2,6 +2,11 @@
 require_once 'autoload.php';
 require 'templates/header.php';
 
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit;
+}
+
 $repo = new CharacterRepository();
 $character = null;
 $error = '';
