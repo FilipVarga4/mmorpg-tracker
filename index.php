@@ -8,8 +8,10 @@ $stats = $repo->getGlobalStats();
 
 $searchName = isset($_GET['search_name']) ? trim($_GET['search_name']) : '';
 $filterStyle = isset($_GET['filter_style']) ? trim($_GET['filter_style']) : '';
+$filterFaction = isset($_GET['filter_faction']) ? trim($_GET['filter_faction']) : '';
+$filterRole = isset($_GET['filter_role']) ? trim($_GET['filter_role']) : '';
 
-$characters = $repo->search($searchName, $filterStyle);
+$characters = $repo->search($searchName, $filterStyle, $filterFaction, $filterRole);
 ?>
 
     <h2>Dashboard & Štatistiky</h2>
@@ -28,61 +30,39 @@ $characters = $repo->search($searchName, $filterStyle);
         </div>
     </div>
 
-    <h2>Filtrovanie postáv</h2>
+    <h2>Filtrovanie súpisky na Raid</h2>
     <form action="index.php" method="GET" style="max-width: 100%; display: flex; flex-wrap: wrap; gap: 1rem; padding: 1.5rem; align-items: flex-end; margin-bottom: 2rem;">
-        <div style="flex: 1; min-width: 200px;">
-            <label for="search_name" style="margin-bottom: 0.5rem;">Hľadať podľa mena:</label>
+        <div style="flex: 1; min-width: 130px;">
+            <label for="search_name">Meno postavy:</label>
             <input type="text" id="search_name" name="search_name" value="<?= htmlspecialchars($searchName) ?>" style="margin-bottom: 0;">
         </div>
-        <div style="flex: 1; min-width: 200px;">
-            <label for="filter_style" style="margin-bottom: 0.5rem;">Combat Style:</label>
+        <div style="flex: 1; min-width: 130px;">
+            <label for="filter_faction">Frakcia:</label>
+            <select id="filter_faction" name="filter_faction" style="margin-bottom: 0;">
+                <option value="">-- Všetky --</option>
+                <option value="Empire" <?= $filterFaction === 'Empire' ? 'selected' : '' ?>>Sith Empire</option>
+                <option value="Republic" <?= $filterFaction === 'Republic' ? 'selected' : '' ?>>Galactic Republic</option>
+            </select>
+        </div>
+        <div style="flex: 1; min-width: 130px;">
+            <label for="filter_role">Rola (Role):</label>
+            <select id="filter_role" name="filter_role" style="margin-bottom: 0;">
+                <option value="">-- Všetky --</option>
+                <option value="Tank" <?= $filterRole === 'Tank' ? 'selected' : '' ?>>Tank</option>
+                <option value="DPS" <?= $filterRole === 'DPS' ? 'selected' : '' ?>>DPS</option>
+                <option value="Healer" <?= $filterRole === 'Healer' ? 'selected' : '' ?>>Healer</option>
+            </select>
+        </div>
+        <div style="flex: 1; min-width: 150px;">
+            <label for="filter_style">Discipline:</label>
             <select id="filter_style" name="filter_style" style="margin-bottom: 0;">
-                <option value="">-- Všetky triedy --</option>
-                <optgroup label="Assassin / Shadow">
-                    <option value="Darkness / Kinetic Combat" <?= $filterStyle === 'Darkness / Kinetic Combat' ? 'selected' : '' ?>>Darkness / Kinetic Combat</option>
-                    <option value="Deception / Infiltration" <?= $filterStyle === 'Deception / Infiltration' ? 'selected' : '' ?>>Deception / Infiltration</option>
-                    <option value="Hatred / Serenity" <?= $filterStyle === 'Hatred / Serenity' ? 'selected' : '' ?>>Hatred / Serenity</option>
-                </optgroup>
-                <optgroup label="Juggernaut / Guardian">
-                    <option value="Immortal / Defense" <?= $filterStyle === 'Immortal / Defense' ? 'selected' : '' ?>>Immortal / Defense</option>
-                    <option value="Vengeance / Vigilance" <?= $filterStyle === 'Vengeance / Vigilance' ? 'selected' : '' ?>>Vengeance / Vigilance</option>
-                    <option value="Rage / Focus" <?= $filterStyle === 'Rage / Focus' ? 'selected' : '' ?>>Rage / Focus</option>
-                </optgroup>
-                <optgroup label="Marauder / Sentinel">
-                    <option value="Annihilation / Watchman" <?= $filterStyle === 'Annihilation / Watchman' ? 'selected' : '' ?>>Annihilation / Watchman</option>
-                    <option value="Carnage / Combat" <?= $filterStyle === 'Carnage / Combat' ? 'selected' : '' ?>>Carnage / Combat</option>
-                    <option value="Fury / Concentration" <?= $filterStyle === 'Fury / Concentration' ? 'selected' : '' ?>>Fury / Concentration</option>
-                </optgroup>
-                <optgroup label="Sorcerer / Sage">
-                    <option value="Lightning / Telekinetics" <?= $filterStyle === 'Lightning / Telekinetics' ? 'selected' : '' ?>>Lightning / Telekinetics</option>
-                    <option value="Madness / Balance" <?= $filterStyle === 'Madness / Balance' ? 'selected' : '' ?>>Madness / Balance</option>
-                    <option value="Corruption / Seer" <?= $filterStyle === 'Corruption / Seer' ? 'selected' : '' ?>>Corruption / Seer</option>
-                </optgroup>
-                <optgroup label="Powertech / Vanguard">
-                    <option value="Shield Tech / Shield Specialist" <?= $filterStyle === 'Shield Tech / Shield Specialist' ? 'selected' : '' ?>>Shield Tech / Shield Specialist</option>
-                    <option value="Advanced Prototype / Tactics" <?= $filterStyle === 'Advanced Prototype / Tactics' ? 'selected' : '' ?>>Advanced Prototype / Tactics</option>
-                    <option value="Pyrotech / Plasmatech" <?= $filterStyle === 'Pyrotech / Plasmatech' ? 'selected' : '' ?>>Pyrotech / Plasmatech</option>
-                </optgroup>
-                <optgroup label="Mercenary / Commando">
-                    <option value="Arsenal / Gunnery" <?= $filterStyle === 'Arsenal / Gunnery' ? 'selected' : '' ?>>Arsenal / Gunnery</option>
-                    <option value="Innovative Ordnance / Assault Spec" <?= $filterStyle === 'Innovative Ordnance / Assault Spec' ? 'selected' : '' ?>>Innovative Ordnance / Assault Spec</option>
-                    <option value="Bodyguard / Combat Medic" <?= $filterStyle === 'Bodyguard / Combat Medic' ? 'selected' : '' ?>>Bodyguard / Combat Medic</option>
-                </optgroup>
-                <optgroup label="Operative / Scoundrel">
-                    <option value="Concealment / Scrapper" <?= $filterStyle === 'Concealment / Scrapper' ? 'selected' : '' ?>>Concealment / Scrapper</option>
-                    <option value="Lethality / Ruffian" <?= $filterStyle === 'Lethality / Ruffian' ? 'selected' : '' ?>>Lethality / Ruffian</option>
-                    <option value="Medicine / Sawbones" <?= $filterStyle === 'Medicine / Sawbones' ? 'selected' : '' ?>>Medicine / Sawbones</option>
-                </optgroup>
-                <optgroup label="Sniper / Gunslinger">
-                    <option value="Marksmanship / Sharpshooter" <?= $filterStyle === 'Marksmanship / Sharpshooter' ? 'selected' : '' ?>>Marksmanship / Sharpshooter</option>
-                    <option value="Engineering / Saboteur" <?= $filterStyle === 'Engineering / Saboteur' ? 'selected' : '' ?>>Engineering / Saboteur</option>
-                    <option value="Virulence / Dirty Fighting" <?= $filterStyle === 'Virulence / Dirty Fighting' ? 'selected' : '' ?>>Virulence / Dirty Fighting</option>
-                </optgroup>
+                <option value="">-- Všetky špecifikácie --</option>
+                <?php require 'templates/style_options.php'; ?>
             </select>
         </div>
         <div>
             <input type="submit" value="Aplikovať" style="padding: 0.75rem 1.5rem;">
-            <?php if (!empty($searchName) || !empty($filterStyle)): ?>
+            <?php if (!empty($searchName) || !empty($filterStyle) || !empty($filterFaction) || !empty($filterRole)): ?>
                 <a href="index.php" style="margin-left: 1rem; color: var(--text-muted); text-decoration: none; font-weight: 500;">Reset</a>
             <?php endif; ?>
         </div>
@@ -92,27 +72,36 @@ $characters = $repo->search($searchName, $filterStyle);
     <table>
         <thead>
         <tr>
-            <th>ID</th>
+            <th>Frakcia</th>
+            <th>Rola</th>
             <th>Meno postavy</th>
-            <th>Combat Style</th>
+            <th>Discipline</th>
             <th>Gear Rating</th>
-            <th>BiS Progres (Max 343)</th>
+            <th>BiS Progres</th>
             <?php if ($isLoggedIn): ?><th>Akcie</th><?php endif; ?>
         </tr>
         </thead>
         <tbody>
         <?php if (empty($characters)): ?>
-            <tr><td colspan="<?= $isLoggedIn ? 6 : 5 ?>">Žiadne postavy nevyhovujú kritériám vyhľadávania.</td></tr>
+            <tr><td colspan="<?= $isLoggedIn ? 7 : 6 ?>">Žiadne postavy nevyhovujú kritériám vyhľadávania.</td></tr>
         <?php else: ?>
             <?php foreach ($characters as $char):
                 $pct = $char->getProgressionPercentage();
+                $facColor = ($char->getFaction() === 'Empire') ? '#ef4444' : '#3b82f6';
+
+
+                $roleColor = '#a1a1aa';
+                if ($char->getRole() === 'Tank') $roleColor = '#c084fc';
+                if ($char->getRole() === 'Healer') $roleColor = '#4ade80';
+                if ($char->getRole() === 'DPS') $roleColor = '#f87171';
                 ?>
                 <tr>
-                    <td><?= $char->getId() ?></td>
+                    <td><span style="color: <?= $facColor ?>; border: 1px solid <?= $facColor ?>; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase;"><?= $char->getFaction() ?></span></td>
+                    <td><span style="color: <?= $roleColor ?>; font-weight: bold; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em;"><?= $char->getRole() ?></span></td>
                     <td><strong><?= htmlspecialchars($char->getName()) ?></strong></td>
                     <td><span style="background-color: #242429; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.875rem;"><?= htmlspecialchars($char->getCombatStyle()) ?></span></td>
                     <td><?= $char->getGearRating() ?> / <span style="color: var(--text-muted); font-size: 0.875rem;"><?= $char->getTargetRating() ?></span></td>
-                    <td style="width: 250px;">
+                    <td style="width: 220px;">
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
                             <div style="background-color: var(--bg-color); border: 1px solid var(--border-color); width: 100%; height: 12px; border-radius: 6px; overflow: hidden;">
                                 <div style="background: linear-gradient(90deg, var(--accent-color), var(--accent-hover)); width: <?= $pct ?>%; height: 100%;"></div>
