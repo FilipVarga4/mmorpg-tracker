@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
+
 require_once 'autoload.php';
 require 'templates/header.php';
 $isLoggedIn = isset($_SESSION['user_id']);
@@ -15,55 +19,55 @@ $characters = $repo->search($searchName, $filterStyle, $filterFaction, $filterRo
 ?>
 
     <h2>Dashboard & Štatistiky</h2>
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
-        <div style="background-color: var(--card-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); text-align: center;">
-            <div style="color: var(--text-muted); font-size: 0.875rem; text-transform: uppercase;">Sledované postavy</div>
-            <div style="font-size: 2rem; font-weight: bold; color: var(--accent-color); margin-top: 0.5rem;"><?= $stats['total'] ?></div>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">Sledované postavy</div>
+            <div class="stat-value total"><?= $stats['total'] ?></div>
         </div>
-        <div style="background-color: var(--card-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); text-align: center;">
-            <div style="color: var(--text-muted); font-size: 0.875rem; text-transform: uppercase;">Priemerný Item Rating</div>
-            <div style="font-size: 2rem; font-weight: bold; color: var(--success-color); margin-top: 0.5rem;"><?= $stats['average'] ?></div>
+        <div class="stat-card">
+            <div class="stat-label">Priemerný Item Rating</div>
+            <div class="stat-value average"><?= $stats['average'] ?></div>
         </div>
-        <div style="background-color: var(--card-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); text-align: center;">
-            <div style="color: var(--text-muted); font-size: 0.875rem; text-transform: uppercase;">Najvyšší dosiahnutý BiS</div>
-            <div style="font-size: 2rem; font-weight: bold; color: #f59e0b; margin-top: 0.5rem;"><?= $stats['max_rating'] ?></div>
+        <div class="stat-card">
+            <div class="stat-label">Najvyšší dosiahnutý BiS</div>
+            <div class="stat-value max"><?= $stats['max_rating'] ?></div>
         </div>
     </div>
 
     <h2>Filtrovanie súpisky na Raid</h2>
-    <form action="index.php" method="GET" style="max-width: 100%; display: flex; flex-wrap: wrap; gap: 1rem; padding: 1.5rem; align-items: flex-end; margin-bottom: 2rem;">
-        <div style="flex: 1; min-width: 130px;">
+    <form action="index.php" method="GET" class="filter-form">
+        <div class="form-group">
             <label for="search_name">Meno postavy:</label>
-            <input type="text" id="search_name" name="search_name" value="<?= htmlspecialchars($searchName) ?>" style="margin-bottom: 0;">
+            <input type="text" id="search_name" name="search_name" value="<?= htmlspecialchars($searchName) ?>">
         </div>
-        <div style="flex: 1; min-width: 130px;">
+        <div class="form-group">
             <label for="filter_faction">Frakcia:</label>
-            <select id="filter_faction" name="filter_faction" style="margin-bottom: 0;">
+            <select id="filter_faction" name="filter_faction">
                 <option value="">-- Všetky --</option>
                 <option value="Empire" <?= $filterFaction === 'Empire' ? 'selected' : '' ?>>Sith Empire</option>
                 <option value="Republic" <?= $filterFaction === 'Republic' ? 'selected' : '' ?>>Galactic Republic</option>
             </select>
         </div>
-        <div style="flex: 1; min-width: 130px;">
+        <div class="form-group">
             <label for="filter_role">Rola (Role):</label>
-            <select id="filter_role" name="filter_role" style="margin-bottom: 0;">
+            <select id="filter_role" name="filter_role">
                 <option value="">-- Všetky --</option>
                 <option value="Tank" <?= $filterRole === 'Tank' ? 'selected' : '' ?>>Tank</option>
                 <option value="DPS" <?= $filterRole === 'DPS' ? 'selected' : '' ?>>DPS</option>
                 <option value="Healer" <?= $filterRole === 'Healer' ? 'selected' : '' ?>>Healer</option>
             </select>
         </div>
-        <div style="flex: 1; min-width: 150px;">
+        <div class="form-group-lg">
             <label for="filter_style">Discipline:</label>
-            <select id="filter_style" name="filter_style" style="margin-bottom: 0;">
+            <select id="filter_style" name="filter_style">
                 <option value="">-- Všetky špecifikácie --</option>
                 <?php require 'templates/style_options.php'; ?>
             </select>
         </div>
         <div>
-            <input type="submit" value="Aplikovať" style="padding: 0.75rem 1.5rem;">
+            <input type="submit" value="Aplikovať">
             <?php if (!empty($searchName) || !empty($filterStyle) || !empty($filterFaction) || !empty($filterRole)): ?>
-                <a href="index.php" style="margin-left: 1rem; color: var(--text-muted); text-decoration: none; font-weight: 500;">Reset</a>
+                <a href="index.php" class="btn-reset">Reset</a>
             <?php endif; ?>
         </div>
     </form>
@@ -87,26 +91,21 @@ $characters = $repo->search($searchName, $filterStyle, $filterFaction, $filterRo
         <?php else: ?>
             <?php foreach ($characters as $char):
                 $pct = $char->getProgressionPercentage();
-                $facColor = ($char->getFaction() === 'Empire') ? '#ef4444' : '#3b82f6';
-
-
-                $roleColor = '#a1a1aa';
-                if ($char->getRole() === 'Tank') $roleColor = '#c084fc';
-                if ($char->getRole() === 'Healer') $roleColor = '#4ade80';
-                if ($char->getRole() === 'DPS') $roleColor = '#f87171';
+                $factionClass = ($char->getFaction() === 'Empire') ? 'badge-empire' : 'badge-republic';
+                $roleClass = 'role-' . strtolower($char->getRole());
                 ?>
                 <tr>
-                    <td><span style="color: <?= $facColor ?>; border: 1px solid <?= $facColor ?>; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase;"><?= $char->getFaction() ?></span></td>
-                    <td><span style="color: <?= $roleColor ?>; font-weight: bold; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em;"><?= $char->getRole() ?></span></td>
+                    <td><span class="badge <?= $factionClass ?>"><?= $char->getFaction() ?></span></td>
+                    <td><span class="role-text <?= $roleClass ?>"><?= $char->getRole() ?></span></td>
                     <td><strong><?= htmlspecialchars($char->getName()) ?></strong></td>
-                    <td><span style="background-color: #242429; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.875rem;"><?= htmlspecialchars($char->getCombatStyle()) ?></span></td>
-                    <td><?= $char->getGearRating() ?> / <span style="color: var(--text-muted); font-size: 0.875rem;"><?= $char->getTargetRating() ?></span></td>
-                    <td style="width: 220px;">
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <div style="background-color: var(--bg-color); border: 1px solid var(--border-color); width: 100%; height: 12px; border-radius: 6px; overflow: hidden;">
-                                <div style="background: linear-gradient(90deg, var(--accent-color), var(--accent-hover)); width: <?= $pct ?>%; height: 100%;"></div>
+                    <td><span class="discipline-tag"><?= htmlspecialchars($char->getCombatStyle()) ?></span></td>
+                    <td><?= $char->getGearRating() ?> / <span class="text-muted-sm"><?= $char->getTargetRating() ?></span></td>
+                    <td class="progress-cell">
+                        <div class="progress-wrapper">
+                            <div class="progress-bg">
+                                <div class="progress-bar" style="width: <?= $pct ?>%;"></div>
                             </div>
-                            <span style="font-size: 0.875rem; font-weight: 600; min-width: 45px; text-align: right;"><?= $pct ?>%</span>
+                            <span class="progress-text"><?= $pct ?>%</span>
                         </div>
                     </td>
                     <?php if ($isLoggedIn): ?>
