@@ -120,4 +120,16 @@ $characters = $repo->search($searchName, $filterStyle, $filterFaction, $filterRo
         </tbody>
     </table>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const activeDiscipline = "<?= htmlspecialchars($filterStyle) ?>";
+
+            if (activeDiscipline) {
+                document.getElementById('filter_style').value = activeDiscipline;
+            }
+        });
+    </script>
+
+<?php require 'templates/footer.php'; ?>
+
 <?php require 'templates/footer.php'; ?>
