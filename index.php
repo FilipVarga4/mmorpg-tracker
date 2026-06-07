@@ -38,9 +38,46 @@ $characters = $repo->search($searchName, $filterStyle);
             <label for="filter_style" style="margin-bottom: 0.5rem;">Combat Style:</label>
             <select id="filter_style" name="filter_style" style="margin-bottom: 0;">
                 <option value="">-- Všetky triedy --</option>
-                <option value="Sith Assassin" <?= $filterStyle === 'Sith Assassin' ? 'selected' : '' ?>>Sith Assassin</option>
-                <option value="Jedi Shadow" <?= $filterStyle === 'Jedi Shadow' ? 'selected' : '' ?>>Jedi Shadow</option>
-                <option value="Sith Warrior" <?= $filterStyle === 'Sith Warrior' ? 'selected' : '' ?>>Sith Warrior</option>
+                <optgroup label="Assassin / Shadow">
+                    <option value="Darkness / Kinetic Combat" <?= $filterStyle === 'Darkness / Kinetic Combat' ? 'selected' : '' ?>>Darkness / Kinetic Combat</option>
+                    <option value="Deception / Infiltration" <?= $filterStyle === 'Deception / Infiltration' ? 'selected' : '' ?>>Deception / Infiltration</option>
+                    <option value="Hatred / Serenity" <?= $filterStyle === 'Hatred / Serenity' ? 'selected' : '' ?>>Hatred / Serenity</option>
+                </optgroup>
+                <optgroup label="Juggernaut / Guardian">
+                    <option value="Immortal / Defense" <?= $filterStyle === 'Immortal / Defense' ? 'selected' : '' ?>>Immortal / Defense</option>
+                    <option value="Vengeance / Vigilance" <?= $filterStyle === 'Vengeance / Vigilance' ? 'selected' : '' ?>>Vengeance / Vigilance</option>
+                    <option value="Rage / Focus" <?= $filterStyle === 'Rage / Focus' ? 'selected' : '' ?>>Rage / Focus</option>
+                </optgroup>
+                <optgroup label="Marauder / Sentinel">
+                    <option value="Annihilation / Watchman" <?= $filterStyle === 'Annihilation / Watchman' ? 'selected' : '' ?>>Annihilation / Watchman</option>
+                    <option value="Carnage / Combat" <?= $filterStyle === 'Carnage / Combat' ? 'selected' : '' ?>>Carnage / Combat</option>
+                    <option value="Fury / Concentration" <?= $filterStyle === 'Fury / Concentration' ? 'selected' : '' ?>>Fury / Concentration</option>
+                </optgroup>
+                <optgroup label="Sorcerer / Sage">
+                    <option value="Lightning / Telekinetics" <?= $filterStyle === 'Lightning / Telekinetics' ? 'selected' : '' ?>>Lightning / Telekinetics</option>
+                    <option value="Madness / Balance" <?= $filterStyle === 'Madness / Balance' ? 'selected' : '' ?>>Madness / Balance</option>
+                    <option value="Corruption / Seer" <?= $filterStyle === 'Corruption / Seer' ? 'selected' : '' ?>>Corruption / Seer</option>
+                </optgroup>
+                <optgroup label="Powertech / Vanguard">
+                    <option value="Shield Tech / Shield Specialist" <?= $filterStyle === 'Shield Tech / Shield Specialist' ? 'selected' : '' ?>>Shield Tech / Shield Specialist</option>
+                    <option value="Advanced Prototype / Tactics" <?= $filterStyle === 'Advanced Prototype / Tactics' ? 'selected' : '' ?>>Advanced Prototype / Tactics</option>
+                    <option value="Pyrotech / Plasmatech" <?= $filterStyle === 'Pyrotech / Plasmatech' ? 'selected' : '' ?>>Pyrotech / Plasmatech</option>
+                </optgroup>
+                <optgroup label="Mercenary / Commando">
+                    <option value="Arsenal / Gunnery" <?= $filterStyle === 'Arsenal / Gunnery' ? 'selected' : '' ?>>Arsenal / Gunnery</option>
+                    <option value="Innovative Ordnance / Assault Spec" <?= $filterStyle === 'Innovative Ordnance / Assault Spec' ? 'selected' : '' ?>>Innovative Ordnance / Assault Spec</option>
+                    <option value="Bodyguard / Combat Medic" <?= $filterStyle === 'Bodyguard / Combat Medic' ? 'selected' : '' ?>>Bodyguard / Combat Medic</option>
+                </optgroup>
+                <optgroup label="Operative / Scoundrel">
+                    <option value="Concealment / Scrapper" <?= $filterStyle === 'Concealment / Scrapper' ? 'selected' : '' ?>>Concealment / Scrapper</option>
+                    <option value="Lethality / Ruffian" <?= $filterStyle === 'Lethality / Ruffian' ? 'selected' : '' ?>>Lethality / Ruffian</option>
+                    <option value="Medicine / Sawbones" <?= $filterStyle === 'Medicine / Sawbones' ? 'selected' : '' ?>>Medicine / Sawbones</option>
+                </optgroup>
+                <optgroup label="Sniper / Gunslinger">
+                    <option value="Marksmanship / Sharpshooter" <?= $filterStyle === 'Marksmanship / Sharpshooter' ? 'selected' : '' ?>>Marksmanship / Sharpshooter</option>
+                    <option value="Engineering / Saboteur" <?= $filterStyle === 'Engineering / Saboteur' ? 'selected' : '' ?>>Engineering / Saboteur</option>
+                    <option value="Virulence / Dirty Fighting" <?= $filterStyle === 'Virulence / Dirty Fighting' ? 'selected' : '' ?>>Virulence / Dirty Fighting</option>
+                </optgroup>
             </select>
         </div>
         <div>
