@@ -10,13 +10,15 @@ class CharacterRepository {
 
     public function save(Character $character): bool {
         $stmt = $this->db->prepare(
-            "INSERT INTO characters (char_name, combat_style, gear_rating, target_rating) VALUES (:name, :style, :rating, :target_rating)"
+            "INSERT INTO characters (char_name, combat_style, gear_rating, target_rating, faction, role) VALUES (:name, :style, :rating, :target_rating, :faction, :role)"
         );
         return $stmt->execute([
             ':name' => $character->getName(),
             ':style' => $character->getCombatStyle(),
             ':rating' => $character->getGearRating(),
-            ':target_rating' => $character->getTargetRating()
+            ':target_rating' => $character->getTargetRating(),
+            ':faction' => $character->getFaction(),
+            ':role' => $character->getRole()
         ]);
     }
 
@@ -29,6 +31,8 @@ class CharacterRepository {
                 $row['combat_style'],
                 (int)$row['gear_rating'],
                 (int)$row['target_rating'],
+                $row['faction'],
+                $row['role'],
                 (int)$row['id']
             );
         }
@@ -46,6 +50,8 @@ class CharacterRepository {
                 $row['combat_style'],
                 (int)$row['gear_rating'],
                 (int)$row['target_rating'],
+                $row['faction'],
+                $row['role'],
                 (int)$row['id']
             );
         }
@@ -54,13 +60,15 @@ class CharacterRepository {
 
     public function update(Character $character): bool {
         $stmt = $this->db->prepare(
-            "UPDATE characters SET char_name = :name, combat_style = :style, gear_rating = :rating, target_rating = :target_rating WHERE id = :id"
+            "UPDATE characters SET char_name = :name, combat_style = :style, gear_rating = :rating, target_rating = :target_rating, faction = :faction, role = :role WHERE id = :id"
         );
         return $stmt->execute([
             ':name' => $character->getName(),
             ':style' => $character->getCombatStyle(),
             ':rating' => $character->getGearRating(),
             ':target_rating' => $character->getTargetRating(),
+            ':faction' => $character->getFaction(),
+            ':role' => $character->getRole(),
             ':id' => $character->getId()
         ]);
     }
@@ -70,16 +78,7 @@ class CharacterRepository {
         return $stmt->execute([':id' => $id]);
     }
 
-    public function getGlobalStats(): array {
-        $stmt = $this->db->query("SELECT COUNT(*) as total, AVG(gear_rating) as average, MAX(gear_rating) as max_rating FROM characters");
-        $stats = $stmt->fetch();
-        return [
-            'total' => (int)($stats['total'] ?? 0),
-            'average' => $stats['average'] ? round((float)$stats['average'], 1) : 0.0,
-            'max_rating' => (int)($stats['max_rating'] ?? 0)
-        ];
-    }
-    public function search(string $name = '', string $style = ''): array {
+    public function search(string $name = '', string $style = '', string $faction = '', string $role = ''): array {
         $sql = "SELECT * FROM characters WHERE 1=1";
         $params = [];
 
@@ -87,10 +86,17 @@ class CharacterRepository {
             $sql .= " AND char_name LIKE :name";
             $params[':name'] = '%' . $name . '%';
         }
-
         if (!empty($style)) {
             $sql .= " AND combat_style = :style";
             $params[':style'] = $style;
+        }
+        if (!empty($faction)) {
+            $sql .= " AND faction = :faction";
+            $params[':faction'] = $faction;
+        }
+        if (!empty($role)) {
+            $sql .= " AND role = :role";
+            $params[':role'] = $role;
         }
 
         $sql .= " ORDER BY gear_rating DESC";
@@ -105,9 +111,21 @@ class CharacterRepository {
                 $row['combat_style'],
                 (int)$row['gear_rating'],
                 (int)$row['target_rating'],
+                $row['faction'],
+                $row['role'],
                 (int)$row['id']
             );
         }
         return $results;
+    }
+
+    public function getGlobalStats(): array {
+        $stmt = $this->db->query("SELECT COUNT(*) as total, AVG(gear_rating) as average, MAX(gear_rating) as max_rating FROM characters");
+        $stats = $stmt->fetch();
+        return [
+            'total' => (int)($stats['total'] ?? 0),
+            'average' => $stats['average'] ? round((float)$stats['average'], 1) : 0.0,
+            'max_rating' => (int)($stats['max_rating'] ?? 0)
+        ];
     }
 }

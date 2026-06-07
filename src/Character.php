@@ -7,6 +7,8 @@ class Character {
         private string $combat_style,
         private int $gear_rating,
         private int $target_rating = 343,
+        private string $faction = 'Empire',
+        private string $role = 'DPS',
         private ?int $id = null
     ) {}
 
@@ -14,6 +16,8 @@ class Character {
     public function getCombatStyle(): string { return $this->combat_style; }
     public function getGearRating(): int { return $this->gear_rating; }
     public function getTargetRating(): int { return $this->target_rating; }
+    public function getFaction(): string { return $this->faction; }
+    public function getRole(): string { return $this->role; }
     public function getId(): ?int { return $this->id; }
 
     public function getProgressionPercentage(): float {
