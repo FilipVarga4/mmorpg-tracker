@@ -5,7 +5,11 @@ $isLoggedIn = isset($_SESSION['user_id']);
 
 $repo = new CharacterRepository();
 $stats = $repo->getGlobalStats();
-$characters = $repo->getAll();
+
+$searchName = isset($_GET['search_name']) ? trim($_GET['search_name']) : '';
+$filterStyle = isset($_GET['filter_style']) ? trim($_GET['filter_style']) : '';
+
+$characters = $repo->search($searchName, $filterStyle);
 ?>
 
     <h2>Dashboard & Štatistiky</h2>
@@ -24,6 +28,29 @@ $characters = $repo->getAll();
         </div>
     </div>
 
+    <h2>Filtrovanie postáv</h2>
+    <form action="index.php" method="GET" style="max-width: 100%; display: flex; flex-wrap: wrap; gap: 1rem; padding: 1.5rem; align-items: flex-end; margin-bottom: 2rem;">
+        <div style="flex: 1; min-width: 200px;">
+            <label for="search_name" style="margin-bottom: 0.5rem;">Hľadať podľa mena:</label>
+            <input type="text" id="search_name" name="search_name" value="<?= htmlspecialchars($searchName) ?>" style="margin-bottom: 0;">
+        </div>
+        <div style="flex: 1; min-width: 200px;">
+            <label for="filter_style" style="margin-bottom: 0.5rem;">Combat Style:</label>
+            <select id="filter_style" name="filter_style" style="margin-bottom: 0;">
+                <option value="">-- Všetky triedy --</option>
+                <option value="Sith Assassin" <?= $filterStyle === 'Sith Assassin' ? 'selected' : '' ?>>Sith Assassin</option>
+                <option value="Jedi Shadow" <?= $filterStyle === 'Jedi Shadow' ? 'selected' : '' ?>>Jedi Shadow</option>
+                <option value="Sith Warrior" <?= $filterStyle === 'Sith Warrior' ? 'selected' : '' ?>>Sith Warrior</option>
+            </select>
+        </div>
+        <div>
+            <input type="submit" value="Aplikovať" style="padding: 0.75rem 1.5rem;">
+            <?php if (!empty($searchName) || !empty($filterStyle)): ?>
+                <a href="index.php" style="margin-left: 1rem; color: var(--text-muted); text-decoration: none; font-weight: 500;">Reset</a>
+            <?php endif; ?>
+        </div>
+    </form>
+
     <h2>Prehľad progresie postáv</h2>
     <table>
         <thead>
@@ -38,7 +65,7 @@ $characters = $repo->getAll();
         </thead>
         <tbody>
         <?php if (empty($characters)): ?>
-            <tr><td colspan="<?= $isLoggedIn ? 6 : 5 ?>">Zatiaľ neboli pridané žiadne postavy.</td></tr>
+            <tr><td colspan="<?= $isLoggedIn ? 6 : 5 ?>">Žiadne postavy nevyhovujú kritériám vyhľadávania.</td></tr>
         <?php else: ?>
             <?php foreach ($characters as $char):
                 $pct = $char->getProgressionPercentage();
@@ -59,7 +86,7 @@ $characters = $repo->getAll();
                     <?php if ($isLoggedIn): ?>
                         <td class="action-links">
                             <a href="edit_character.php?id=<?= $char->getId() ?>">Upraviť</a> |
-                            <a href="delete_character.php?id=<?= $char->getId() ?>" onclick="return confirm('Naozaj chcete vymazať túto postavu?');\">Vymazať</a>
+                            <a href="delete_character.php?id=<?= $char->getId() ?>" onclick="return confirm('Naozaj chcete vymazať túto postavu?');">Vymazať</a>
                         </td>
                     <?php endif; ?>
                 </tr>
