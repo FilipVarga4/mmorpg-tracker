@@ -79,4 +79,35 @@ class CharacterRepository {
             'max_rating' => (int)($stats['max_rating'] ?? 0)
         ];
     }
+    public function search(string $name = '', string $style = ''): array {
+        $sql = "SELECT * FROM characters WHERE 1=1";
+        $params = [];
+
+        if (!empty($name)) {
+            $sql .= " AND char_name LIKE :name";
+            $params[':name'] = '%' . $name . '%';
+        }
+
+        if (!empty($style)) {
+            $sql .= " AND combat_style = :style";
+            $params[':style'] = $style;
+        }
+
+        $sql .= " ORDER BY gear_rating DESC";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+
+        $results = [];
+        while ($row = $stmt->fetch()) {
+            $results[] = new Character(
+                $row['char_name'],
+                $row['combat_style'],
+                (int)$row['gear_rating'],
+                (int)$row['target_rating'],
+                (int)$row['id']
+            );
+        }
+        return $results;
+    }
 }
