@@ -26,8 +26,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $char_name = htmlspecialchars(trim($_POST['char_name']));
     $combat_style = htmlspecialchars(trim($_POST['combat_style']));
     $gear_rating = (int)$_POST['gear_rating'];
+    $target_rating = (int)$_POST['target_rating'];
 
-    $updatedCharacter = new Character($char_name, $combat_style, $gear_rating, $id);
+    $updatedCharacter = new Character($char_name, $combat_style, $gear_rating, $target_rating, $id);
 
     if ($repo->update($updatedCharacter)) {
         $success = "Postava bola úspešne upravená.";
@@ -41,8 +42,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <h2>Úprava postavy</h2>
 
 <?php
-if ($success) echo "<div style='color: green; margin-bottom: 15px;'>$success <a href='index.php'>Späť na prehľad</a></div>";
-if ($error) echo "<div style='color: red; margin-bottom: 15px;'>$error</div>";
+if ($success) echo "<div class='alert alert-success'>$success <a href='index.php'>Späť na prehľad</a></div>";
+if ($error) echo "<div class='alert alert-danger'>$error</div>";
 ?>
 
     <form action="edit_character.php?id=<?= $character->getId() ?>" method="POST">
@@ -58,6 +59,9 @@ if ($error) echo "<div style='color: red; margin-bottom: 15px;'>$error</div>";
 
         <label for="gear_rating">Aktuálny Item Rating:</label><br>
         <input type="number" id="gear_rating" name="gear_rating" min="1" max="400" value="<?= $character->getGearRating() ?>" required><br><br>
+
+        <label for="target_rating">Cieľový BiS Item Rating:</label><br>
+        <input type="number" id="target_rating" name="target_rating" min="1" max="400" value="<?= $character->getTargetRating() ?>" required><br><br>
 
         <input type="submit" value="Uložiť zmeny">
     </form>

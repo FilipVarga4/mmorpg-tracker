@@ -1,25 +1,32 @@
-<?php require 'templates/header.php';
+<?php
+require_once 'autoload.php';
+require 'templates/header.php';
+
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit;
 }
 ?>
 
-
     <h2>Záznam novej postavy a výbavy</h2>
 
 <?php
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $char_name = htmlspecialchars($_POST['char_name']);
-    $combat_style = htmlspecialchars($_POST['combat_style']);
-    $gear_rating = htmlspecialchars($_POST['gear_rating']);
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $char_name = htmlspecialchars(trim($_POST['char_name']));
+    $combat_style = htmlspecialchars(trim($_POST['combat_style']));
+    $gear_rating = (int)$_POST['gear_rating'];
+    $target_rating = (int)$_POST['target_rating'];
 
-    echo "<div style='border: 1px solid green; padding: 10px; margin-bottom: 20px;'>";
-    echo "<strong>Dáta úspešne prijaté z formulára:</strong><br>";
-    echo "Meno: " . $char_name . "<br>";
-    echo "Trieda: " . $combat_style . "<br>";
-    echo "Aktuálny Gear Rating: " . $gear_rating;
-    echo "</div>";
+    $character = new Character($char_name, $combat_style, $gear_rating, $target_rating);
+    $repo = new CharacterRepository();
+
+    if ($repo->save($character)) {
+        echo "<div class='alert alert-success'>";
+        echo "Postava <strong>$char_name</strong> bola úspešne uložená. <a href='index.php'>Zobraziť prehľad</a>";
+        echo "</div>";
+    } else {
+        echo "<div class='alert alert-danger'>Nastala chyba pri ukladaní.</div>";
+    }
 }
 ?>
 
@@ -34,8 +41,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <option value="Sith Warrior">Sith Warrior</option>
         </select><br><br>
 
-        <label for="gear_rating">Aktuálny Item Rating (napr. 340+):</label><br>
+        <label for="gear_rating">Aktuálny Item Rating:</label><br>
         <input type="number" id="gear_rating" name="gear_rating" min="1" max="400" required><br><br>
+
+        <label for="target_rating">Cieľový BiS Item Rating:</label><br>
+        <input type="number" id="target_rating" name="target_rating" min="1" max="400" value="343" required><br><br>
 
         <input type="submit" value="Uložiť progres">
     </form>
