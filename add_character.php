@@ -11,9 +11,9 @@ $error = '';
 $success = '';
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $char_name = htmlspecialchars(trim($_POST['char_name']));
-    $combat_style = htmlspecialchars(trim($_POST['combat_style']));
-    $faction = htmlspecialchars(trim($_POST['faction']));
+    $char_name = trim($_POST['char_name']);
+    $combat_style = trim($_POST['combat_style']);
+    $faction = trim($_POST['faction']);
     $gear_rating = (int)$_POST['gear_rating'];
     $target_rating = (int)$_POST['target_rating'];
     $role = RoleMapper::getRoleByStyle($combat_style);
@@ -29,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $repo = new CharacterRepository();
 
         if ($repo->save($character)) {
-            $success = "Postava <strong>$char_name</strong> ($role) bola úspešne uložená.";
+            $success = "Postava <strong>" . htmlspecialchars($char_name, ENT_QUOTES, 'UTF-8') . "</strong> ($role) bola úspešne uložená.";
         } else {
             $error = "Nastala chyba pri ukladaní do databázy.";
         }
