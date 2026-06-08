@@ -23,9 +23,9 @@ if (isset($_GET['id'])) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $char_name = htmlspecialchars(trim($_POST['char_name']));
-    $combat_style = htmlspecialchars(trim($_POST['combat_style']));
-    $faction = htmlspecialchars(trim($_POST['faction']));
+    $char_name = trim($_POST['char_name']);
+    $combat_style = trim($_POST['combat_style']);
+    $faction = trim($_POST['faction']);
     $gear_rating = (int)$_POST['gear_rating'];
     $target_rating = (int)$_POST['target_rating'];
     $role = RoleMapper::getRoleByStyle($combat_style);
@@ -39,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     } else {
         $updatedCharacter = new Character($char_name, $combat_style, $gear_rating, $target_rating, $faction, $role, $id);
 
-        if ($repo->update($updatedCharacter)) {
+        if ($repo->save($updatedCharacter)) {
             $success = "Postava bola úspešne upravená.";
             $character = $updatedCharacter;
         } else {
@@ -58,7 +58,7 @@ if ($error) echo "<div class='alert alert-danger'>$error</div>";
 
     <form action="edit_character.php?id=<?= $character->getId() ?>" method="POST">
         <label for="char_name">Meno postavy:</label><br>
-        <input type="text" id="char_name" name="char_name" value="<?= htmlspecialchars($character->getName()) ?>" required><br><br>
+        <input type="text" id="char_name" name="char_name" value="<?= htmlspecialchars($character->getName(), ENT_QUOTES, 'UTF-8') ?>" required><br><br>
 
         <label for="faction">Frakcia:</label><br>
         <select id="faction" name="faction" required>
@@ -85,7 +85,7 @@ if ($error) echo "<div class='alert alert-danger'>$error</div>";
             const factionSelect = document.getElementById('faction');
             const styleSelect = document.getElementById('combat_style');
             const allOptions = Array.from(styleSelect.options);
-            const selectedValue = "<?= $character->getCombatStyle() ?>";
+            const selectedValue = "<?= htmlspecialchars($character->getCombatStyle(), ENT_QUOTES, 'UTF-8') ?>";
 
             function filterStyles() {
                 const selectedFaction = factionSelect.value;
