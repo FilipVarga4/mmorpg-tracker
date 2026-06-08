@@ -17,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = $repo->findByUsername($username);
 
     if ($user && password_verify($password, $user->getPassword())) {
+        session_regenerate_id(true);
         $_SESSION['user_id'] = $user->getId();
         $_SESSION['username'] = $user->getUsername();
         header('Location: index.php');
