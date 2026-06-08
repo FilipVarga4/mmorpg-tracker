@@ -38,7 +38,7 @@ $characters = $repo->search($searchName, $filterStyle, $filterFaction, $filterRo
     <form action="index.php" method="GET" class="filter-form">
         <div class="form-group">
             <label for="search_name">Meno postavy:</label>
-            <input type="text" id="search_name" name="search_name" value="<?= htmlspecialchars($searchName) ?>">
+            <input type="text" id="search_name" name="search_name" value="<?= htmlspecialchars($searchName, ENT_QUOTES, 'UTF-8') ?>">
         </div>
         <div class="form-group">
             <label for="filter_faction">Frakcia:</label>
@@ -97,8 +97,8 @@ $characters = $repo->search($searchName, $filterStyle, $filterFaction, $filterRo
                 <tr>
                     <td><span class="badge <?= $factionClass ?>"><?= $char->getFaction() ?></span></td>
                     <td><span class="role-text <?= $roleClass ?>"><?= $char->getRole() ?></span></td>
-                    <td><strong><?= htmlspecialchars($char->getName()) ?></strong></td>
-                    <td><span class="discipline-tag"><?= htmlspecialchars($char->getCombatStyle()) ?></span></td>
+                    <td><strong><?= htmlspecialchars($char->getName(), ENT_QUOTES, 'UTF-8') ?></strong></td>
+                    <td><span class="discipline-tag"><?= htmlspecialchars($char->getCombatStyle(), ENT_QUOTES, 'UTF-8') ?></span></td>
                     <td><?= $char->getGearRating() ?> / <span class="text-muted-sm"><?= $char->getTargetRating() ?></span></td>
                     <td class="progress-cell">
                         <div class="progress-wrapper">
@@ -122,14 +122,12 @@ $characters = $repo->search($searchName, $filterStyle, $filterFaction, $filterRo
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const activeDiscipline = "<?= htmlspecialchars($filterStyle) ?>";
+            const activeDiscipline = "<?= htmlspecialchars($filterStyle, ENT_QUOTES, 'UTF-8') ?>";
 
             if (activeDiscipline) {
                 document.getElementById('filter_style').value = activeDiscipline;
             }
         });
     </script>
-
-<?php require 'templates/footer.php'; ?>
 
 <?php require 'templates/footer.php'; ?>
