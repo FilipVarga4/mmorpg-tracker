@@ -93,7 +93,7 @@ class CharacterRepository {
         return $stmt->execute([':id' => $id]);
     }
 
-    public function search(string $name = '', string $style = '', string $faction = '', string $role = ''): array {
+    public function search(string $name = '', string $style = '', string $faction = '', string $role = '', int $limit = 25, int $offset = 0): array {
         $sql = "SELECT * FROM characters WHERE 1=1";
         $params = [];
 
@@ -114,7 +114,7 @@ class CharacterRepository {
             $params[':role'] = $role;
         }
 
-        $sql .= " ORDER BY gear_rating DESC";
+        $sql .= " ORDER BY gear_rating DESC LIMIT " . (int)$limit . " OFFSET " . (int)$offset;
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
@@ -132,6 +132,32 @@ class CharacterRepository {
             );
         }
         return $results;
+    }
+
+    public function countSearch(string $name = '', string $style = '', string $faction = '', string $role = ''): int {
+        $sql = "SELECT COUNT(*) FROM characters WHERE 1=1";
+        $params = [];
+
+        if (!empty($name)) {
+            $sql .= " AND char_name LIKE :name";
+            $params[':name'] = '%' . $name . '%';
+        }
+        if (!empty($style)) {
+            $sql .= " AND combat_style = :style";
+            $params[':style'] = $style;
+        }
+        if (!empty($faction)) {
+            $sql .= " AND faction = :faction";
+            $params[':faction'] = $faction;
+        }
+        if (!empty($role)) {
+            $sql .= " AND role = :role";
+            $params[':role'] = $role;
+        }
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return (int)$stmt->fetchColumn();
     }
 
     public function getGlobalStats(): array {
