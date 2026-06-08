@@ -9,17 +9,32 @@ class CharacterRepository {
     }
 
     public function save(Character $character): bool {
-        $stmt = $this->db->prepare(
-            "INSERT INTO characters (char_name, combat_style, gear_rating, target_rating, faction, role) VALUES (:name, :style, :rating, :target_rating, :faction, :role)"
-        );
-        return $stmt->execute([
-            ':name' => $character->getName(),
-            ':style' => $character->getCombatStyle(),
-            ':rating' => $character->getGearRating(),
-            ':target_rating' => $character->getTargetRating(),
-            ':faction' => $character->getFaction(),
-            ':role' => $character->getRole()
-        ]);
+        if ($character->getId() !== null) {
+            $stmt = $this->db->prepare(
+                "UPDATE characters SET char_name = :name, combat_style = :style, gear_rating = :rating, target_rating = :target_rating, faction = :faction, role = :role WHERE id = :id"
+            );
+            return $stmt->execute([
+                ':name' => $character->getName(),
+                ':style' => $character->getCombatStyle(),
+                ':rating' => $character->getGearRating(),
+                ':target_rating' => $character->getTargetRating(),
+                ':faction' => $character->getFaction(),
+                ':role' => $character->getRole(),
+                ':id' => $character->getId()
+            ]);
+        } else {
+            $stmt = $this->db->prepare(
+                "INSERT INTO characters (char_name, combat_style, gear_rating, target_rating, faction, role) VALUES (:name, :style, :rating, :target_rating, :faction, :role)"
+            );
+            return $stmt->execute([
+                ':name' => $character->getName(),
+                ':style' => $character->getCombatStyle(),
+                ':rating' => $character->getGearRating(),
+                ':target_rating' => $character->getTargetRating(),
+                ':faction' => $character->getFaction(),
+                ':role' => $character->getRole()
+            ]);
+        }
     }
 
     public function getAll(): array {
