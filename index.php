@@ -15,7 +15,17 @@ $filterStyle = isset($_GET['filter_style']) ? trim($_GET['filter_style']) : '';
 $filterFaction = isset($_GET['filter_faction']) ? trim($_GET['filter_faction']) : '';
 $filterRole = isset($_GET['filter_role']) ? trim($_GET['filter_role']) : '';
 
-$characters = $repo->search($searchName, $filterStyle, $filterFaction, $filterRole);
+$perPage = 25;
+$page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+$offset = ($page - 1) * $perPage;
+
+$totalCharacters = $repo->countSearch($searchName, $filterStyle, $filterFaction, $filterRole);
+$totalPages = (int)ceil($totalCharacters / $perPage);
+if ($totalPages < 1) {
+    $totalPages = 1;
+}
+
+$characters = $repo->search($searchName, $filterStyle, $filterFaction, $filterRole, $perPage, $offset);
 ?>
 
     <h2>Dashboard & Štatistiky</h2>
@@ -66,13 +76,13 @@ $characters = $repo->search($searchName, $filterStyle, $filterFaction, $filterRo
         </div>
         <div>
             <input type="submit" value="Aplikovať">
-            <?php if (!empty($searchName) || !empty($filterStyle) || !empty($filterFaction) || !empty($filterRole)): ?>
+            <?php if (!empty($searchName) || !empty($filterStyle) || !empty($filterFaction) || !empty($filterRole) || $page > 1): ?>
                 <a href="index.php" class="btn-reset">Reset</a>
             <?php endif; ?>
         </div>
     </form>
 
-    <h2>Prehľad progresie postáv</h2>
+    <h2>Prehľad progresie postáv (Strana <?= $page ?> z <?= $totalPages ?>)</h2>
     <table>
         <thead>
         <tr>
@@ -119,6 +129,19 @@ $characters = $repo->search($searchName, $filterStyle, $filterFaction, $filterRo
         <?php endif; ?>
         </tbody>
     </table>
+
+<?php if ($totalPages > 1): ?>
+    <div class="pagination">
+        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+            <?php
+            $queryParams = $_GET;
+            $queryParams['page'] = $i;
+            $queryString = http_build_query($queryParams);
+            ?>
+            <a href="index.php?<?= $queryString ?>" class="<?= $i === $page ? 'active' : '' ?>"><?= $i ?></a>
+        <?php endfor; ?>
+    </div>
+<?php endif; ?>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
